@@ -1,0 +1,19 @@
+name: sqlite-state-persister
+description: Executes transactional SQL queries against an agent instance's embedded SQLite database.
+input_schema:
+  type: object
+  properties:
+    instance_id:
+      type: string
+      description: Specific Durable Object instance identifier.
+    query:
+      type: string
+      description: Parameterized SQL query string (e.g., SELECT, INSERT, UPDATE).
+    params:
+      type: array
+      items: {}
+      description: Parameters to bind to the SQL query statement.
+      default: []
+  required:
+    - instance_id
+    - query

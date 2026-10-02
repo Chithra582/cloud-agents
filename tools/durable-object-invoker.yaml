@@ -1,0 +1,23 @@
+name: durable-object-invoker
+description: Invokes an exported method on a target Durable Object agent instance by name or ID.
+input_schema:
+  type: object
+  properties:
+    agent_name:
+      type: string
+      description: The registered class name or identifier of the target agent.
+    instance_id:
+      type: string
+      description: Specific Durable Object instance ID (or name for idFromName).
+    method_name:
+      type: string
+      description: The name of the callable method to invoke.
+    arguments:
+      type: array
+      items: {}
+      description: List of positional arguments to pass to the method.
+      default: []
+  required:
+    - agent_name
+    - instance_id
+    - method_name

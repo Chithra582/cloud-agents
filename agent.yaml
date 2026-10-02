@@ -1,0 +1,21 @@
+spec_version: "0.1.0"
+name: "cloud-agents"
+version: "0.4.0"
+description: "Persistent, stateful edge execution platform for agentic workloads powered by Cloudflare Durable Objects, WebSockets, and SQLite."
+author: "Cloudflare / Cloud-Agents Contributors"
+license: "Apache-2.0"
+metadata:
+  domain: "Developer Tools / Stateful Edge AI Agents & Durable Objects Infrastructure"
+  category: "Developer Tools"
+  framework: "Cloudflare Workers / Durable Objects / SQLite / TypeScript"
+  language: "TypeScript"
+skills:
+  - "durable-state-synchronization"
+  - "edge-lifecycle-orchestration"
+  - "websocket-mesh-communication"
+  - "mcp-edge-integration"
+tools:
+  - "durable-object-invoker"
+  - "sqlite-state-persister"
+  - "agent-lifecycle-controller"
+  - "edge-websocket-streamer"

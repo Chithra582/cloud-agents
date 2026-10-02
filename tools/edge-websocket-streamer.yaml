@@ -1,0 +1,17 @@
+name: edge-websocket-streamer
+description: Broadcasts state updates or messages to active WebSocket connections associated with a Durable Object instance.
+input_schema:
+  type: object
+  properties:
+    instance_id:
+      type: string
+      description: Target Durable Object instance identifier.
+    payload:
+      type: string
+      description: Serialized JSON or text message to broadcast.
+    tag_filter:
+      type: string
+      description: Optional tag to broadcast only to connections subscribed to this tag.
+  required:
+    - instance_id
+    - payload

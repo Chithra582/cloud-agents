@@ -1,0 +1,18 @@
+name: agent-lifecycle-controller
+description: Controls agent lifecycle states including alarm scheduling, eviction into hibernation, and health probes.
+input_schema:
+  type: object
+  properties:
+    instance_id:
+      type: string
+      description: Target Durable Object instance identifier.
+    action:
+      type: string
+      description: Lifecycle action to execute ('schedule_alarm', 'hibernate', 'status').
+    alarm_delay_ms:
+      type: integer
+      description: Delay in milliseconds for scheduling an alarm.
+      default: 0
+  required:
+    - instance_id
+    - action

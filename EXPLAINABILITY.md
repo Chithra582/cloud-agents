@@ -1,8 +1,8 @@
 # EXPLAINABILITY.md
 
-This document explains the internal mechanisms, data lineage, operational boundaries, and governance framework of **# Explainability & Decision Transparency Report** (`cloud-agents`) in accordance with the **OpenGAP v0.1.0** specification for the **HiDevs GitAgent Passport** clearance pipeline.
+This document explains the internal mechanisms, data lineage, operational boundaries, and governance framework of **Cloud Agents** (`cloud-agents`) in accordance with the **OpenGAP v0.1.0** specification for the **HiDevs GitAgent Passport** clearance pipeline.
 
-> **Agent Name:** # Explainability & Decision Transparency Report (`cloud-agents`)  
+> **Agent Name:** Cloud Agents (`cloud-agents`)  
 > **Specification:** OpenGAP v0.1.0  
 > **Category / Domain:** Developer Tools / Stateful Edge AI Agents & Durable Objects Infrastructure  
 > **Compliance Standard:** OpenGAP Checkpoint 2 (Explainability & Decision Governance), OWASP LLM Top 10, MITRE ATLAS  
@@ -11,7 +11,7 @@ This document explains the internal mechanisms, data lineage, operational bounda
 
 ## How the Agent Decides
 
-# Explainability & Decision Transparency Report operates via a deterministic five-stage operational pipeline.
+The edge agent processes incoming state mutations, WebSocket events, and RPC commands through a deterministic, 5-stage edge execution pipeline.
 
 ### 1. Decision Architecture
 
@@ -52,7 +52,6 @@ The runtime intake, state classification, evaluation, and execution tracking ope
 
 ### 2. Decision Logic & Routing Formulations
 
-Scoring
 Edge agent co-location and Durable Object migration scoring are computed using a geo-latency affinity formulation:
 
 $$S_{\text{edge}}(c, n) = \alpha \cdot \left(1 - \frac{\text{RTT}(c, n)}{\text{MaxRTT}}\right) + \beta \cdot \text{CacheLocality}(n) - \gamma \cdot \text{EvictionPressure}(n)$$
@@ -70,29 +69,31 @@ Where $u_i$ is channel activity score and $\tau = 0.5$ is the temperature parame
 
 ### 3. Thresholding & Refusal Decision Criteria
 
-# Explainability & Decision Transparency Report enforces strict operational boundaries and deterministic refusal thresholds:
-- **Refusal on ERR_DO_MEMORY_LIMIT_EXCEEDED**: **Durable Object Memory Limit** halts execution with code `ERR_DO_MEMORY_LIMIT_EXCEEDED`.
-- **Refusal on ERR_WEBSOCKET_CAPACITY_REACHED**: **Max Concurrent WebSockets** halts execution with code `ERR_WEBSOCKET_CAPACITY_REACHED`.
-- **Refusal on ERR_SQLITE_WRITE_OVERSIZED**: **Storage Transaction Size** halts execution with code `ERR_SQLITE_WRITE_OVERSIZED`.
-- **Refusal on ERR_CIRCULAR_CALL_DETECTED**: **Circular RPC Depth** halts execution with code `ERR_CIRCULAR_CALL_DETECTED`.
-- **Refusal on ERR_ALARM_FREQUENCY_EXCEEDED**: **Alarm Rate Limit** halts execution with code `ERR_ALARM_FREQUENCY_EXCEEDED`.
+Cloud Agents enforces strict operational boundaries and deterministic refusal thresholds:
+- **Refusal on ERR_DO_MEMORY_LIMIT_EXCEEDED**: Durable Object Memory Limit ($> 128$ MB) halts execution with code `ERR_DO_MEMORY_LIMIT_EXCEEDED`.
+- **Refusal on ERR_WEBSOCKET_CAPACITY_REACHED**: Max Concurrent WebSockets ($> 32,768$ connections) halts execution with code `ERR_WEBSOCKET_CAPACITY_REACHED`.
+- **Refusal on ERR_SQLITE_WRITE_OVERSIZED**: Storage Transaction Size ($> 2$ MB per write) halts execution with code `ERR_SQLITE_WRITE_OVERSIZED`.
+- **Refusal on ERR_CIRCULAR_CALL_DETECTED**: Circular RPC Depth ($\ge 5$ hops) halts execution with code `ERR_CIRCULAR_CALL_DETECTED`.
+- **Refusal on ERR_ALARM_FREQUENCY_EXCEEDED**: Alarm Rate Limit ($> 1$ alarm per 10s per agent) halts execution with code `ERR_ALARM_FREQUENCY_EXCEEDED`.
 
 ### 4. Fallback Decision Mechanism
 
 Continuous operational stability is maintained through layered fault recovery:
+- **Tier 1 (Automated Transaction Rollback)**: If a SQLite write or `@callable` method errors midexecution, the transaction automatically reverts to the precall checkpoint.
+- **Tier 2 (Replica Edge Failover)**: If an edge pointofpresence (PoP) experiences hardware degradation, Cloudflare's global anycast network automatically migrates the Durable Object instance to the nearest healthy datacenter within seconds.
 - **Model Fallback Cascade**: High-level reasoning and synthesis default to `gemini-2.0-flash` with automatic failover to `gpt-4o` and `claude-3-5-sonnet`.
 
 ### 5. Human-in-the-Loop Governance
 
 Human operators retain sovereign authority over the multi-agent execution lifecycle:
-- **Consequential Action Sign-Off**: Sensitive and consequential actions require operator sign-off.
-- **Offline Ledger Auditing**: Operators can verify execution records and state transitions offline.
+- **Tier 3 (Human Administrator Intervention)**: Critical schema migration mismatches or persistent database corruption trigger automated alerting to DevOps administrators.
+- **Benchmark Trajectory Auditing**: Operators inspect evaluation traces, raw generation tokens, and container logs to verify scoring fidelity.
 
 ---
 
 ## The Data It Uses
 
-# Explainability & Decision Transparency Report operates under strict principles of data minimization, environment isolation, and privacy protection.
+Cloud Agents operates under strict principles of data minimization, environment isolation, and privacy protection.
 
 ### 1. Ingested Input Data
 
@@ -103,7 +104,9 @@ The framework processes only operational data necessary to perform its functions
 
 ### 2. Configuration & Reference Data
 
-- **Configuration Schemas**: Declarative system policy files.
+- **Durable Object SQLite**: Embedded zero-latency relational tables per agent instance.
+- **Key-Value Storage**: Fast key-value bindings for metadata and cursor pointers.
+- **Vectorize**: Embedded vector embeddings for semantic search over agent memory.
 
 ### 3. Base Model & Inference Lineage
 
@@ -121,7 +124,7 @@ The framework processes only operational data necessary to perform its functions
 
 ## Limitations
 
-Understanding the operational boundaries and technical constraints of # Explainability & Decision Transparency Report is essential for effective deployment.
+Understanding the operational boundaries and technical constraints of Cloud Agents is essential for effective deployment.
 
 ### 1. Single-Threaded Per-Instance Concurrency
 - **Limitation**: Each Durable Object instance processes requests sequentially on a single thread, creating a bottleneck if high throughput targets a single agent ID.
